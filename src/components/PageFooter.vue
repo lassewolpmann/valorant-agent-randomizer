@@ -1,6 +1,6 @@
 <template>
   <footer>
-    <a href=""></a>
+    <a href="https://github.com/lassewolpmann/valorant-agent-randomizer" target='_blank' rel="noopener noreferrer">GitHub</a>
   </footer>
 </template>
 
@@ -12,7 +12,16 @@ export default {
 
 <style scoped>
   footer {
-    position: fixed;
-    bottom: 0;
+    position: absolute;
+    bottom: 20px;
+  }
+
+  footer > a {
+    all: unset;
+    cursor: pointer;
+    font-weight: bold;
+    color: white;
+    background: rgba(255, 255, 255, 0.3);
+    padding: 5px 10px;
   }
 </style>

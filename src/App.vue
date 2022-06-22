@@ -1,16 +1,28 @@
 <template>
-  <AgentWheel />
+  <div class="category-buttons">
+    <button @click="category = 'agents'">Agents</button>
+    <button @click="category = 'guns'">Guns</button>
+  </div>
+  <AgentWheel v-if="category === 'agents'" />
+  <GunWheel v-if="category === 'guns'"  />
   <PageFooter />
 </template>
 
 <script>
-import AgentWheel from "@/components/AgentWheel";
+import AgentWheel from "@/components/Wheel/AgentWheel";
+import GunWheel from "@/components/Wheel/GunWheel";
 import PageFooter from "@/components/PageFooter";
 
 export default {
   name: 'App',
+  data() {
+    return {
+      category: 'agents'
+    }
+  },
   components: {
     PageFooter,
+    GunWheel,
     AgentWheel
   }
 }
@@ -20,6 +32,27 @@ export default {
 body {
   margin: 0;
   padding: 0;
+}
+
+.category-buttons {
+  position: absolute;
+  top: 50px;
+}
+
+.category-buttons > button {
+  all: unset;
+  margin: 10px 20px;
+  background: #FF1145;
+  color: white;
+  font-weight: bold;
+  font-size: 1.5em;
+  padding: 10px 25px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.category-buttons > button:hover {
+  background: #111111;
 }
 
 #app {
