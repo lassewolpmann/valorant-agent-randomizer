@@ -1,5 +1,5 @@
 <template>
-  <BasicWheel category="AGENTS" apiURL="https://valorant-api.com/v1/agents"/>
+  <BasicWheel category="AGENTS" apiURL="https://valorant-api.com/v1/agents?isPlayableCharacter=true"/>
 </template>
 
 <script>

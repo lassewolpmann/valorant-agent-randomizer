@@ -5,9 +5,9 @@
       <span class="arrow lower"></span>
     </div>
     <TransitionGroup name="wheel">
-      <div v-for="data in wheelData" :key="data" class="data">
-        <img :src="data['displayIcon']" :alt="data['displayName']" :style="{ transform: 'translateX(' + imgOffset + 'px)'}">
-        <p :style="{ transform: 'translateX(' + imgOffset + 'px)'}">{{ data.displayName.toUpperCase() }}</p>
+      <div v-for="data in wheelData" :key="data" class="data" :class="{ offset: imgOffset }">
+        <img :src="data['displayIcon']" :alt="data['displayName']">
+        <p>{{ data.displayName.toUpperCase() }}</p>
       </div>
     </TransitionGroup>
   </div>
@@ -24,7 +24,7 @@ export default {
   data() {
     return {
       wheelData: [],
-      imgOffset: null
+      imgOffset: false
     };
   },
   methods: {
@@ -57,14 +57,17 @@ export default {
   mounted() {
     fetch(this.apiURL)
         .then(response => response.json())
-        .then(data => (this.wheelData = data.data))
-        .then(() => this.shuffle(this.wheelData))
-        .then(() => this.wheelData.length % 2 === 0 ? this.imgOffset = 125 : this.imgOffset = 0)
+        .then(data => {
+          this.wheelData = data.data;
+          this.shuffle(this.wheelData);
+          this.wheelData.length % 2 === 0 ? this.imgOffset = true : this.imgOffset = false;
+        })
   },
 }
 </script>
 
 <style scoped>
+
 .wheel-move {
   transition: all 100ms;
 }
@@ -82,10 +85,11 @@ export default {
 
 .current-indicator {
   position: absolute;
-  width: 250px;
-  height: 90%;
-  border: 3px solid #FF1145;
+  width: 290px;
+  height: 95%;
+  border: 2px solid #FF1145;
   border-radius: 5px;
+  background: rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -96,18 +100,17 @@ export default {
   position: absolute;
   width: 20px;
   height: 10px;
-  background: rgb(220, 220, 220);
-  border-radius: 5px;
+  background: #FF1145;
 }
 
 .current-indicator > .arrow.upper {
   clip-path: polygon(0 0, 100% 0, 50% 100%);
-  top: -5px;
+  top: -1px;
 }
 
 .current-indicator > .arrow.lower {
   clip-path: polygon(50% 0, 100% 100%, 0 100%);
-  bottom: -5px;
+  bottom: -1px;
 }
 
 .wheel::after {
@@ -115,18 +118,24 @@ export default {
   content: '';
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.8) 10%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.8) 90%);
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.5) 100%);
 }
 
 .data {
-  margin: 5px;
-  border-radius: 5px;
+  margin: 0 20px;
+}
+
+.data.offset {
+  transform: translateX(155px);
 }
 
 .data > img {
   width: 250px;
   height: auto;
-  padding: 10px 0;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.4);
 }
 
 .data p {
@@ -139,16 +148,17 @@ export default {
 .roll-button {
   all: unset;
   margin-top: 20px;
-  background: #FF1145;
+  background: linear-gradient(90deg, #0F1923 50%, #FF1145 50%) right bottom;
+  background-size: 201% 100%;
   color: white;
   font-weight: bold;
   font-size: 1.5em;
   padding: 20px 75px;
   cursor: pointer;
-  border-radius: 3px;
+  transition:all 0.3s ease;
 }
 
 .roll-button:hover {
-  background: #111111;
+  background-position: left bottom;
 }
 </style>
