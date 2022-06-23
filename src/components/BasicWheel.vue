@@ -5,46 +5,33 @@
       <span class="arrow lower"></span>
     </div>
     <TransitionGroup name="wheel">
-      <div v-for="data in wheelData" :key="data" class="data" :class="{ offset: imgOffset }">
-        <img :src="data['displayIcon']" :alt="data['displayName']">
+      <div v-for="data in wheelData" :key="data" class="data" :class="{ offset: imgOffset} ">
+        <img v-if="category === 'guns'" :src="data['displayIcon']" :alt="data['displayName']">
+        <img v-if="category === 'agents'" :src="data['fullPortraitV2']" :alt="data['displayName']" :style="getBackground(data)">
         <p>{{ data.displayName.toUpperCase() }}</p>
       </div>
     </TransitionGroup>
   </div>
-  <button v-on:click="pick" class="roll-button">ROLL {{ category }}</button>
+  <button v-on:click="pick" class="roll-button">ROLL {{ category.toUpperCase() }}</button>
 </template>
 
 <script>
 export default {
   name: "BasicWheel",
   props: {
-    category: String,
-    apiURL: String
-  },
-  data() {
-    return {
-      wheelData: [],
-      imgOffset: false
-    };
+    data: Array,
+    category: String
   },
   methods: {
     shuffle() {
-      let data = [...this.wheelData];
-      let currentIndex = data.length,  randomIndex;
-
-      // While there remain elements to shuffle.
+      let currentIndex = this.wheelData.length,  randomIndex;
       while (currentIndex !== 0) {
-
-        // Pick a remaining element.
         randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex--;
 
-        // And swap it with the current element.
-        [data[currentIndex], data[randomIndex]] = [
-          data[randomIndex], data[currentIndex]];
+        [this.wheelData[currentIndex], this.wheelData[randomIndex]] = [
+          this.wheelData[randomIndex], this.wheelData[currentIndex]];
       }
-
-      this.wheelData = data;
     },
     async pick() {
       let rollCount = Math.floor(Math.random() * (50 - 5) + 5);
@@ -52,17 +39,28 @@ export default {
         this.wheelData.push(this.wheelData.shift());
         await new Promise(r => setTimeout(r, 50));
       }
+    },
+    getBackground(data) {
+      let gradientColors = {...data['backgroundGradientColors']};
+      let gradientOne = '#' + gradientColors[0];
+      let gradientTwo = '#' + gradientColors[1];
+      let gradient = gradientOne + ', ' + gradientTwo;
+      let backgroundImage = data['background'];
+
+      return 'background-image: url(' + backgroundImage + '), linear-gradient(90deg, ' + gradient + ')'
+    }
+  },
+  data() {
+    return {
+      wheelData: Array,
+      imgOffset: false
     }
   },
   mounted() {
-    fetch(this.apiURL)
-        .then(response => response.json())
-        .then(data => {
-          this.wheelData = data.data;
-          this.shuffle(this.wheelData);
-          this.wheelData.length % 2 === 0 ? this.imgOffset = true : this.imgOffset = false;
-        })
-  },
+    this.wheelData = this.data;
+    this.shuffle(this.wheelData);
+    this.wheelData.length % 2 === 0 ? this.imgOffset = true : this.imgOffset = false;
+  }
 }
 </script>
 
@@ -89,7 +87,6 @@ export default {
   height: 95%;
   border: 2px solid #FF1145;
   border-radius: 5px;
-  background: rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -122,20 +119,27 @@ export default {
 }
 
 .data {
+  min-width: 250px;
+  height: 300px;
   margin: 0 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .data.offset {
-  transform: translateX(155px);
+  transform: translateX(145px);
 }
 
 .data > img {
-  width: 250px;
+  width: 80%;
   height: auto;
   padding: 10px;
-  background: rgba(255, 255, 255, 0.2);
   border-radius: 5px;
-  box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.3);
+  background-position: center;
+  background-size: cover;
 }
 
 .data p {

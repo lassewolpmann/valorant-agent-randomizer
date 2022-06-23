@@ -3,27 +3,38 @@
     <button @click="category = 'agents'">AGENTS</button>
     <button @click="category = 'guns'">GUNS</button>
   </div>
-  <AgentWheel v-if="category === 'agents'" />
-  <GunWheel v-if="category === 'guns'"  />
+  <BasicWheel v-if="category === 'agents'" :data="agentData" :category="category" />
+  <BasicWheel v-if="category === 'guns'"  :data="gunData" :category="category" />
   <PageFooter />
 </template>
 
 <script>
-import AgentWheel from "@/components/Wheel/AgentWheel";
-import GunWheel from "@/components/Wheel/GunWheel";
 import PageFooter from "@/components/PageFooter";
+import BasicWheel from "@/components/BasicWheel";
 
 export default {
   name: 'App',
+  components: {
+    BasicWheel,
+    PageFooter
+  },
   data() {
     return {
-      category: 'agents'
+      category: null,
+      agentData: Array,
+      gunData: Array
     }
   },
-  components: {
-    PageFooter,
-    GunWheel,
-    AgentWheel
+  async mounted() {
+    let agentResponse = await fetch("https://valorant-api.com/v1/agents?isPlayableCharacter=true");
+    let agentData = await agentResponse.json();
+    this.agentData = agentData.data;
+
+    let gunResponse = await fetch("https://valorant-api.com/v1/weapons");
+    let gunData = await gunResponse.json();
+    this.gunData = gunData.data;
+
+    this.category = 'agents';
   }
 }
 </script>
@@ -44,8 +55,8 @@ body {
 
 .category-buttons > button {
   all: unset;
-  width: 100px;
-  margin: 10px 20px;
+  flex: 1;
+  margin: 0 20px;
   background: linear-gradient(90deg, #0F1923 50%, #FF1145 50%) right bottom;
   background-size: 200% 100%;
   color: white;

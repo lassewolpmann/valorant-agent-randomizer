@@ -12,8 +12,7 @@ export default {
 
 <style scoped>
   footer {
-    position: absolute;
-    bottom: 20px;
+    margin-top: 30px;
   }
 
   footer > a {
